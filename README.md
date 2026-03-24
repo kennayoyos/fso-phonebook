@@ -6,7 +6,7 @@ It exists primarily to satisfy **Exercise 3.10 (deployment)**, where the applica
 
 ## 🌐 Live Application
 
-👉 https://<your-render-url>
+👉 https://fso-phonebook-uniu.onrender.com
 
 ## 🧰 Tech Stack
 
