@@ -39,30 +39,6 @@ app.use(express.json());
 app.use(express.static("dist"));
 app.use(customLogging());
 
-// Data
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 // API Routes
 app.get("/", (req, res) => res.send("<h1>Hello World!</h1>"));
 app.get("/api/persons", (req, res) => {
@@ -71,24 +47,26 @@ app.get("/api/persons", (req, res) => {
   });
 });
 app.get("/api/persons/:id", (req, res) => {
-  const id = req.params.id;
-
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.statusMessage = "Given ID does not exist in the phonebook";
-    res.status(404).end();
-  }
+  const idToFind = req.params.id;
+  Person.findById(idToFind)
+    .then((person) => {
+      res.json(person);
+    })
+    .catch((error) => {
+      console.log("Error finding person by id:", error.message);
+      res.statusMessage = "Error finding person";
+      res.status(404).end();
+    });
 });
 
-app.get("/info", (req, res) =>
-  res.send(`
+app.get("/info", (req, res) => {
+  Person.find({}).then((persons) => {
+    res.send(`
   <p>Phonebook has info for ${persons.length} people</p>
   <p>${new Date().toString()}</p>
-  `),
-);
+  `);
+  });
+});
 
 app.post("/api/persons", (req, res) => {
   const personToAdd = req.body;
@@ -122,10 +100,10 @@ app.post("/api/persons", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = req.params.id;
-  persons = persons.filter((person) => person.id !== id);
+  const idToDelete = req.params.id;
 
-  res.status(204).end();
+  // WIP: delete directly from the database
+  res.json({ id: idToDelete });
 });
 
 // Starting the server
