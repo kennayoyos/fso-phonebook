@@ -6,17 +6,6 @@ const Person = require("./models/person");
 const app = express();
 
 // Helper functions
-const generateID = (maxNum = 1_000_000) => {
-  const idsUsed = new Set(persons.map((person) => person.id));
-
-  let id = -1;
-  do {
-    id = Math.floor(Math.random() * maxNum);
-  } while (idsUsed.has(id));
-
-  return id;
-};
-
 const customLogging = () =>
   morgan((tokens, req, res) => {
     const finalLog = [
@@ -81,22 +70,19 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).end();
   }
 
-  // dupicate check
-  const nameExists = persons.some((person) => person.name === personToAdd.name);
+  // WIP: dupicate check
+  // const nameExists = persons.some((person) => person.name === personToAdd.name);
+  // if (nameExists) {
+  //   res.statusMessage = "Name already exists in the phonebook";
+  //   return res.status(409).json({ error: "name must be unique" });
+  // }
 
-  if (nameExists) {
-    res.statusMessage = "Name already exists in the phonebook";
-    return res.status(409).json({ error: "name must be unique" });
-  }
-
-  const newPerson = {
-    id: generateID(),
+  const newPerson = new Person({
     ...personToAdd,
-  };
-
-  persons = persons.concat(newPerson);
-
-  res.status(201).json(newPerson);
+  });
+  newPerson.save().then((result) => {
+    res.status(201).json(result);
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
