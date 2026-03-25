@@ -1,0 +1,23 @@
+{
+  "name": "root",
+  "version": "1.0.0",
+  "description": "This repository contains a simple Phonebook backend application built as part of **Full Stack Open – Part 3**.",
+  "homepage": "https://github.com/kennayoyos/fso-phonebook#readme",
+  "bugs": {
+    "url": "https://github.com/kennayoyos/fso-phonebook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kennayoyos/fso-phonebook.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "mongo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mongoose": "^9.3.2"
+  }
+}
