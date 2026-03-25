@@ -51,6 +51,8 @@ app.get("/api/persons/:id", (req, res, next) => {
   const idToFind = req.params.id;
   Person.findById(idToFind)
     .then((person) => {
+      if (!person) return res.status(404).end();
+
       res.json(person);
     })
     .catch((error) => next(error));

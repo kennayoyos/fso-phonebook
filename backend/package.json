@@ -10,8 +10,8 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m deploy:frontend && git push"
+    "build:ui": "@powershell Remove-Item -Recurse -Force dist && cd ../frontend && npm run build && @powershell Copy-Item dist -Recurse ../backend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m chore:deployment && git push"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
