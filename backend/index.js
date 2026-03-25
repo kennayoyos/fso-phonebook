@@ -22,10 +22,21 @@ const customLogging = () =>
 
     return finalLog.join(" ");
   });
+const errorHandler = (error, request, response, next) => {
+  console.error(error);
+
+  if (error.name === "CastError")
+    return response.status(400).send({ error: "malformatted id" });
+
+  next(error);
+};
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
 
 // Middlewares
-app.use(express.json());
 app.use(express.static("dist"));
+app.use(express.json());
 app.use(customLogging());
 
 // API Routes
@@ -85,12 +96,18 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   const idToDelete = req.params.id;
-
-  // WIP: delete directly from the database
-  res.json({ id: idToDelete });
+  Person.findByIdAndDelete(idToDelete)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
+
+// Post-Routes middlewares
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 // Starting the server
 const PORT = process.env.PORT;
