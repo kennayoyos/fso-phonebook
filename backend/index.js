@@ -40,25 +40,21 @@ app.use(express.json());
 app.use(customLogging());
 
 // API Routes
-app.get("/", (req, res) => res.send("<h1>Hello World!</h1>"));
-app.get("/api/persons", (req, res) => {
-  Person.find({}).then((persons) => {
-    res.json(persons);
-  });
+app.get("/api/persons", (req, res, next) => {
+  Person.find({})
+    .then((persons) => {
+      res.json(persons);
+    })
+    .catch((error) => next(error));
 });
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const idToFind = req.params.id;
   Person.findById(idToFind)
     .then((person) => {
       res.json(person);
     })
-    .catch((error) => {
-      console.log("Error finding person by id:", error.message);
-      res.statusMessage = "Error finding person";
-      res.status(404).end();
-    });
+    .catch((error) => next(error));
 });
-
 app.get("/info", (req, res) => {
   Person.find({}).then((persons) => {
     res.send(`
@@ -81,19 +77,27 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).end();
   }
 
-  // WIP: dupicate check
-  // const nameExists = persons.some((person) => person.name === personToAdd.name);
-  // if (nameExists) {
-  //   res.statusMessage = "Name already exists in the phonebook";
-  //   return res.status(409).json({ error: "name must be unique" });
-  // }
-
   const newPerson = new Person({
     ...personToAdd,
   });
   newPerson.save().then((result) => {
     res.status(201).json(result);
   });
+});
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const { number: numberToUpdate } = req.body;
+  const idToUpdate = req.params.id;
+
+  Person.findById(idToUpdate)
+    .then((person) => {
+      if (!person) return res.status(404).end();
+
+      person.number = numberToUpdate;
+
+      return person.save().then((updatedPerson) => res.json(updatedPerson));
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
