@@ -101,7 +101,7 @@ app.put("/api/persons/:id", (req, res, next) => {
 app.delete("/api/persons/:id", (req, res, next) => {
   const idToDelete = req.params.id;
   Person.findByIdAndDelete(idToDelete)
-    .then((result) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((error) => next(error));
