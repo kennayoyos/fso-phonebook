@@ -127,6 +127,13 @@ const App = () => {
             message: `Added ${dataAdded.name}`,
             isError: false,
           });
+        })
+        .catch((error) => {
+          const errorMessage = error.response.data.error;
+          setNotification({
+            message: errorMessage,
+            isError: true,
+          });
         });
     } else {
       const replaceNumber = window.confirm(
